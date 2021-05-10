@@ -53,14 +53,14 @@ def mods(d):
             print("Missing keys:", keysdir)
             
     
-    return launch+"\""
+    return launch
 
 launch = "{} -limitFPS={} -world={}".format(os.environ["ARMA_BINARY"], os.environ["ARMA_LIMITFPS"], os.environ["ARMA_WORLD"])
 
 if os.path.exists("mods"):
     if os.environ["ARMA_DLC"] != "":
         modstoload = mods("mods")
-        modstoload += os.environ["ARMA_DLC"]+";"
+        modstoload += os.environ["ARMA_DLC"]+";\""
     launch += " -mod={}".format(modstoload)
 
        
