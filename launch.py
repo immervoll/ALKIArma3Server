@@ -58,9 +58,12 @@ def mods(d):
 launch = "{} -limitFPS={} -world={}".format(os.environ["ARMA_BINARY"], os.environ["ARMA_LIMITFPS"], os.environ["ARMA_WORLD"])
 
 if os.path.exists("mods"):
-    launch += " -mod={}".format(mods("mods"))
     if os.environ["ARMA_DLC"] != "":
-        launch += os.environ["ARMA_DLC"]+";"
+        modstoload = mods("mods")
+        modstoload += os.environ["ARMA_DLC"]+";"
+    launch += " -mod={}".format(modstoload)
+
+       
         
 clients = int(os.environ["HEADLESS_CLIENTS"])
 
@@ -102,7 +105,7 @@ else:
 launch += " -port={} -name=\"{}\" -profiles=\"/arma3/configs/profiles\"".format(os.environ["PORT"], os.environ["ARMA_PROFILE"])
 
 if os.path.exists("servermods"):
-    launch += " -serverMod={}".format(mods("servermods"))
+    launch += " -serverMod={}".format(modstoload)
 
 print("LAUNCHING ARMA SERVER WITH", launch, flush=True)
 os.system(launch)
