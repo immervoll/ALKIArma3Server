@@ -1,6 +1,8 @@
 # Arma 3 Dedicated Server
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/synixebrett/arma3server.svg?style=flat-square)](https://hub.docker.com/r/synixebrett/arma3server)
+[![Docker Pulls](https://img.shields.io/docker/pulls/immervoll/alki-arma3server.svg?style=flat-square)](https://hub.docker.com/r/immervoll/alki-arma3server)
+
+A modified version of [Bretts Arma 3 Image](https://github.com/BrettMayson/Arma3Server) with auto mods update and cDLC support.
 
 An Arma 3 Dedicated Server. Updates to the latest version every time it is restarted.
 
@@ -47,6 +49,6 @@ Profiles are saved in `/arma3/configs/profiles`
 | `-e STEAM_PASSWORD`           | Steam password |
 | `-e HEADLESS_CLIENTS`         | Launch n number of headless clients                       | `0` |
 
-The Steam account does not need to own Arma 3, but must have Steam Guard disabled.
+The Steam account is required to own Arma 3 and must have Steam Guard disabled.
 
 List of Steam branches can be found on the Community Wiki, [Arma 3: Steam Branches](https://community.bistudio.com/wiki/Arma_3:_Steam_Branches)
