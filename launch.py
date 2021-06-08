@@ -6,6 +6,8 @@ import re
 CONFIG_FILE = os.environ["ARMA_CONFIG"]
 KEYS = "/arma3/keys"
 
+os.makedirs("root/Steam/steamapps")
+os.makedirs("/arma3")
 os.system("rm -R /arma3/mods/*/")
 if os.path.isfile("/arma3/mods/modlistupdater_active.txt"):
     os.system("/steamcmd/steamcmd.sh +runscript /arma3/mods/modlistupdater_active.txt")
