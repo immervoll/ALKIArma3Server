@@ -2,6 +2,9 @@ import subprocess
 import os
 import shutil
 import re
+import modlistToSteam.main
+
+print("starting pre laumch procedure..")
 
 CONFIG_FILE = os.environ["ARMA_CONFIG"]
 KEYS = "/arma3/keys"
@@ -9,6 +12,9 @@ KEYS = "/arma3/keys"
 os.makedirs("root/Steam/steamapps")
 os.makedirs("/arma3")
 os.system("rm -R /arma3/mods/*/")
+if os.path.isfile("/arma3/mods/active.html") and not os.path.isfile("/arma3/mods/modlistupdater_active.txt") :
+    modlistToSteam.main.convert()
+    
 if os.path.isfile("/arma3/mods/modlistupdater_active.txt"):
     os.system("/steamcmd/steamcmd.sh +runscript /arma3/mods/modlistupdater_active.txt")
     with open("/arma3/mods/modlistupdater_active.txt") as file_in:
@@ -16,20 +22,24 @@ if os.path.isfile("/arma3/mods/modlistupdater_active.txt"):
         for line in file_in:
             if "workshop_download_item" in line:
                 lines.append(line.replace("workshop_download_item 107410 ", "").strip())
-                print(f"copied {line}")
-        print(lines)
+                print(f"found {line}")
         
+    print("copying mods..")
     for line in lines:
          os.system(f"cp -R /root/Steam/steamapps/workshop/content/107410/{line} /arma3/mods/")
-   
-    os.system("cd /arma3/mods && apt update && apt install -y rename && find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;")
+         print(f"copied mod id:{line}")
+         
+    print("renaming mods to avoid conflicts")
+    os.system("cd /arma3/mods && find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;")
     print("mods updated")
-
+    print(f"active mods: {lines}")
+    
 if not os.path.exists(KEYS) or not os.path.isdir(KEYS):
     if os.path.exists(KEYS):
         os.remove(KEYS)
     os.makedirs(KEYS)
-
+    print("created server keys")
+    
 steamcmd = ["/steamcmd/steamcmd.sh"]
 steamcmd.extend(["+login", os.environ["STEAM_USER"], os.environ["STEAM_PASSWORD"]])
 steamcmd.extend(["+force_install_dir", "/arma3"])

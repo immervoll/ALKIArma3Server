@@ -8,6 +8,7 @@ RUN apt-get update \
         python3 \
         lib32stdc++6 \
         lib32gcc1 \
+        rename \
         wget \
         ca-certificates \
     && \
@@ -22,6 +23,7 @@ RUN apt-get update \
     mkdir -p /steamcmd \
         && cd /steamcmd \
         && wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
+RUN pip install beautifulsoup4
 
 ENV ARMA_BINARY=./arma3server
 ENV ARMA_CONFIG=main.cfg
@@ -33,6 +35,8 @@ ENV PORT=2302
 ENV STEAM_BRANCH=public
 ENV STEAM_BRANCH_PASSWORD=
 ENV ARMA_DLC = ""
+ENV STEAM_USER =""
+ENV STEAM__PASSWORD = ""
 
 EXPOSE 2302/udp
 EXPOSE 2303/udp
@@ -41,6 +45,7 @@ EXPOSE 2305/udp
 EXPOSE 2306/udp
 
 ADD launch.py /launch.py
+COPY modlistToSteam /modlistToSteam
 
 WORKDIR /arma3
 
