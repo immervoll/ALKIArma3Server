@@ -11,6 +11,7 @@ RUN apt-get update \
         rename \
         wget \
         ca-certificates \
+    python3-pip\
     && \
     apt-get remove --purge -y \
     && \
@@ -23,7 +24,7 @@ RUN apt-get update \
     mkdir -p /steamcmd \
         && cd /steamcmd \
         && wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
-RUN pip install beautifulsoup4
+RUN pip3 install beautifulsoup4
 
 ENV ARMA_BINARY=./arma3server
 ENV ARMA_CONFIG=main.cfg

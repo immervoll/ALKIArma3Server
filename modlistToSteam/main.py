@@ -1,4 +1,4 @@
-import id_scraper
+from . import id_scraper as id_scraper
 import sys
 import os
 
