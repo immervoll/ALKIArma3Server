@@ -3,6 +3,8 @@ import os
 import shutil
 import re
 import modlistToSteam.main
+from progress.bar import Bar
+from progress.spinner import Spinner
 
 print("starting pre laumch procedure..")
 
@@ -15,36 +17,51 @@ os.makedirs("/arma3", exist_ok=True)
 os.system("rm -R /arma3/mods/*/")
 for file in os.listdir("/arma3/mods/"):
     os.rename("/arma3/mods/" + file, "/arma3/mods/" + file.lower())
-if os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.html") and not os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.txt") :
+if os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.html") and not os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.txt"):
     modlistToSteam.main.convert(ACTIVEMODPACK)
     print("### converted modlist to steamcmd script ###")
-    
+
 if os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.txt"):
-    os.system(f"/steamcmd/steamcmd.sh +runscript /arma3/mods/{ACTIVEMODPACK}.txt")
     with open(f"/arma3/mods/{ACTIVEMODPACK}.txt") as file_in:
         lines = []
         for line in file_in:
             if "workshop_download_item" in line:
-                lines.append(line.replace("workshop_download_item 107410 ", "").strip())
+                lines.append(line.replace(
+                    "workshop_download_item 107410 ", "").strip())
                 print(f"found {line}")
-        
-    print("copying mods..")
-    for line in lines:
-         os.system(f"cp -R /root/Steam/steamapps/workshop/content/107410/{line} /arma3/mods/")
-         print(f"copied mod id:{line}")
-         
+
+    bar = Bar('Downloading Mods', max=len(lines))
+    p = subprocess.Popen(f"/steamcmd/steamcmd.sh +runscript /arma3/mods/{ACTIVEMODPACK}.txt", shell=True, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    while p.stdout is not None:
+        line = p.stdout.readline()
+        if line.startswith("Success. Downloaded item"):
+            bar.next()
+        if not line:
+            print("\n")
+            p.stdout.flush()
+            bar.finish()
+            break
+
+    with Bar('Transfering Mods', max=len(lines)) as bar:
+        for line in lines:
+            os.system(
+                f"cp -R /root/Steam/steamapps/workshop/content/107410/{line} /arma3/mods/")
+            bar.next()
+        bar.finish()
     print("renaming mods to avoid conflicts")
-    os.system("cd /arma3/mods && find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;")
+    os.system(
+        "cd /arma3/mods && find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;")
     print("### mods updated ###")
     print(f"active mods: {lines}")
     print("### starting arma3 ###")
-    
+
 if not os.path.exists(KEYS) or not os.path.isdir(KEYS):
     if os.path.exists(KEYS):
         os.remove(KEYS)
     os.makedirs(KEYS)
     print("created server keys")
-    
+
 steamcmd = ["/steamcmd/steamcmd.sh"]
 steamcmd.extend(["+force_install_dir", "/arma3"])
 steamcmd.extend(["+login", os.environ["STEAM_USER"],
@@ -57,23 +74,27 @@ if "STEAM_BRANCH_PASSWORD" in os.environ and len(os.environ["STEAM_BRANCH_PASSWO
 steamcmd.extend(["validate", "+quit"])
 subprocess.call(steamcmd)
 
+
 def mods(d):
     launch = "\""
-    mods = [os.path.join(d,o) for o in os.listdir(d) if os.path.isdir(os.path.join(d,o))]
+    mods = [os.path.join(d, o) for o in os.listdir(
+        d) if os.path.isdir(os.path.join(d, o))]
     for m in mods:
         launch += m+";"
-        keysdir = os.path.join(m,"keys")
+        keysdir = os.path.join(m, "keys")
         if os.path.exists(keysdir):
-            keys = [os.path.join(keysdir,o) for o in os.listdir(keysdir) if os.path.isdir(os.path.join(keysdir,o)) == False]
+            keys = [os.path.join(keysdir, o) for o in os.listdir(
+                keysdir) if os.path.isdir(os.path.join(keysdir, o)) == False]
             for k in keys:
                 shutil.copy2(k, KEYS)
         else:
             print("Missing keys:", keysdir)
-            
-    
+
     return launch
 
-launch = "{} -limitFPS={} -world={}".format(os.environ["ARMA_BINARY"], os.environ["ARMA_LIMITFPS"], os.environ["ARMA_WORLD"])
+
+launch = "{} -limitFPS={} -world={}".format(
+    os.environ["ARMA_BINARY"], os.environ["ARMA_LIMITFPS"], os.environ["ARMA_WORLD"])
 
 modstoload = ""
 if os.path.exists("/arma3/mods"):
@@ -82,8 +103,7 @@ if os.environ["ARMA_DLC"] != "":
     modstoload += os.environ["ARMA_DLC"]+";\""
 launch += f" -mod={modstoload}"
 
-       
-        
+
 clients = int(os.environ["HEADLESS_CLIENTS"])
 
 print("Headless Clients:", clients)
@@ -108,7 +128,6 @@ if clients != 0:
             tmp_config.write(data)
         launch += " -config=\"/tmp/arma3.cfg\""
 
-    
     client_launch = launch
     client_launch += " -client -connect=127.0.0.1"
     if "password" in config_values:
@@ -121,7 +140,8 @@ if clients != 0:
 else:
     launch += " -config=\"/arma3/configs/{}\"".format(CONFIG_FILE)
 
-launch += " -port={} -name=\"{}\" -profiles=\"/arma3/configs/profiles\"".format(os.environ["PORT"], os.environ["ARMA_PROFILE"])
+launch += " -port={} -name=\"{}\" -profiles=\"/arma3/configs/profiles\"".format(
+    os.environ["PORT"], os.environ["ARMA_PROFILE"])
 
 if os.path.exists("servermods"):
     launch += f" -serverMod={modstoload}"
