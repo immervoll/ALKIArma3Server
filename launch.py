@@ -73,9 +73,9 @@ def mods(d):
 
 launch = "{} -limitFPS={} -world={}".format(os.environ["ARMA_BINARY"], os.environ["ARMA_LIMITFPS"], os.environ["ARMA_WORLD"])
 
-if os.path.exists("mods"):
+if os.path.exists("/arma3/mods"):
     if os.environ["ARMA_DLC"] != "":
-        modstoload = mods("mods")
+        modstoload = mods("/arma3/mods")
         modstoload += os.environ["ARMA_DLC"]+";\""
     launch += " -mod={}".format(modstoload)
 
