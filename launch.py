@@ -10,8 +10,8 @@ CONFIG_FILE = os.environ["ARMA_CONFIG"]
 KEYS = "/arma3/keys"
 ACTIVEMODPACK = os.environ["ALKI_MODPACKNAME"]
 
-os.makedirs("root/Steam/steamapps")
-os.makedirs("/arma3")
+os.makedirs("root/Steam/steamapps", exist_ok=True)
+os.makedirs("/arma3", exist_ok=True)
 os.system("rm -R /arma3/mods/*/")
 if os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.html") and not os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.txt") :
     modlistToSteam.main.convert(ACTIVEMODPACK)
