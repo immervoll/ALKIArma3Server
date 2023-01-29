@@ -8,16 +8,18 @@ print("starting pre laumch procedure..")
 
 CONFIG_FILE = os.environ["ARMA_CONFIG"]
 KEYS = "/arma3/keys"
+ACTIVEMODPACK = os.environ["ALKI_MODPACKNAME"]
 
 os.makedirs("root/Steam/steamapps")
 os.makedirs("/arma3")
 os.system("rm -R /arma3/mods/*/")
-if os.path.isfile("/arma3/mods/active.html") and not os.path.isfile("/arma3/mods/modlistupdater_active.txt") :
-    modlistToSteam.main.convert()
+if os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.html") and not os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.txt") :
+    modlistToSteam.main.convert(ACTIVEMODPACK)
+    print("### converted modlist to steamcmd script ###")
     
-if os.path.isfile("/arma3/mods/modlistupdater_active.txt"):
-    os.system("/steamcmd/steamcmd.sh +runscript /arma3/mods/modlistupdater_active.txt")
-    with open("/arma3/mods/modlistupdater_active.txt") as file_in:
+if os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.txt"):
+    os.system(f"/steamcmd/steamcmd.sh +runscript /arma3/mods/{ACTIVEMODPACK}.txt")
+    with open(f"/arma3/mods/{ACTIVEMODPACK}.txt") as file_in:
         lines = []
         for line in file_in:
             if "workshop_download_item" in line:
@@ -31,8 +33,9 @@ if os.path.isfile("/arma3/mods/modlistupdater_active.txt"):
          
     print("renaming mods to avoid conflicts")
     os.system("cd /arma3/mods && find . -depth -exec rename 's/(.*)\/([^\/]*)/$1\/\L$2/' {} \;")
-    print("mods updated")
+    print("### mods updated ###")
     print(f"active mods: {lines}")
+    print("### starting arma3 ###")
     
 if not os.path.exists(KEYS) or not os.path.isdir(KEYS):
     if os.path.exists(KEYS):
@@ -41,8 +44,9 @@ if not os.path.exists(KEYS) or not os.path.isdir(KEYS):
     print("created server keys")
     
 steamcmd = ["/steamcmd/steamcmd.sh"]
-steamcmd.extend(["+login", os.environ["STEAM_USER"], os.environ["STEAM_PASSWORD"]])
 steamcmd.extend(["+force_install_dir", "/arma3"])
+steamcmd.extend(["+login", os.environ["STEAM_USER"],
+                os.environ["STEAM_PASSWORD"]])
 steamcmd.extend(["+app_update", "233780"])
 if "STEAM_BRANCH" in os.environ and len(os.environ["STEAM_BRANCH"]) > 0:
     steamcmd.extend(["-beta", os.environ["STEAM_BRANCH"]])

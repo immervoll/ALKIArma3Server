@@ -25,6 +25,7 @@ RUN apt-get update \
         && cd /steamcmd \
         && wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
 RUN pip3 install beautifulsoup4
+RUN pip3 install requests
 
 ENV ARMA_BINARY=./arma3server
 ENV ARMA_CONFIG=main.cfg
@@ -38,6 +39,8 @@ ENV STEAM_BRANCH_PASSWORD=
 ENV ARMA_DLC = ""
 ENV STEAM_USER =""
 ENV STEAM__PASSWORD = ""
+ENV ALKI_MODPACKNAME =""
+
 
 EXPOSE 2302/udp
 EXPOSE 2303/udp
