@@ -26,6 +26,7 @@ RUN apt-get update \
         && wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
 RUN pip3 install beautifulsoup4
 RUN pip3 install requests
+RUN pip3 install progress
 
 ENV ARMA_BINARY=./arma3server
 ENV ARMA_CONFIG=main.cfg
