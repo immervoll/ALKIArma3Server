@@ -3,16 +3,16 @@ import sys
 import os
 
 
-def convert(MODLIST:str):
-    modfile = f"./{MODLIST}.html"
+def convert(MODLIST: str):
+    modfile = f"/arma3/mods/{MODLIST}.html"
     assert os.path.exists(
-        modfile), f"unable to locate the modlist html at {str(modfile)}"
+        modfile), f"unable to locate the modlist {str(modfile)} in the arma3 mods folder."
     user = os.getenv("STEAM_USER")
     pw = os.getenv("STEAM_PASSWORD")
 
-    if os.path.exists(f"./{MODLIST}.txt"):
-        os.remove(f"./{MODLIST}.txt")
-    f = open(f"{MODLIST}.txt", "a")
+    if os.path.exists(f"/arma3/mods/{MODLIST}.txt"):
+        os.remove(f"/arma3/mods/{MODLIST}.txt")
+    f = open(f"/arma3/mods/{MODLIST}.txt", "a")
     f.write(f"login {user} {pw} \n")
     i = 0
     for id in id_scraper.getIds(modfile):

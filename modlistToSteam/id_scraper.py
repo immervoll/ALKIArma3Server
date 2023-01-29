@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def getIds(modfile="./modlist.html"):
+def getIds(modfile="/arma3/mods/modlist.html"):
     modlist = open(modfile,"r" )
     soup = BeautifulSoup(modlist, "html.parser")
 
