@@ -2,7 +2,8 @@ FROM debian:buster-slim
 
 LABEL maintainer="ALKI Immervoll - https://github.com/immervoll"
 
-RUN apt-get update &&
+RUN apt-get update \
+    && \
     apt-get install -y --no-install-recommends --no-install-suggests \
         python3 \
         lib32stdc++6 \
@@ -10,14 +11,19 @@ RUN apt-get update &&
         rename \
         wget \
         ca-certificates \
-        python3-pip &&
-    apt-get remove --purge -y &&
-    apt-get clean autoclean &&
-    apt-get autoremove -y &&
-    rm /var/lib/apt/lists/* -r &&
-    mkdir -p /steamcmd &&
-    cd /steamcmd &&
-    wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
+    python3-pip\
+    && \
+    apt-get remove --purge -y \
+    && \
+    apt-get clean autoclean \
+    && \
+    apt-get autoremove -y \
+    && \
+    rm /var/lib/apt/lists/* -r \
+    && \
+    mkdir -p /steamcmd \
+        && cd /steamcmd \
+        && wget -qO- 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxf -
 RUN pip3 install beautifulsoup4
 RUN pip3 install requests
 
@@ -34,6 +40,7 @@ ENV ARMA_DLC = empty
 ENV STEAM_USER = empty
 ENV STEAM_PASSWORD = empty
 ENV ALKI_MODPACKNAME = empty
+
 
 EXPOSE 2302/udp
 EXPOSE 2303/udp
