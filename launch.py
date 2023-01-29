@@ -8,11 +8,13 @@ print("starting pre laumch procedure..")
 
 CONFIG_FILE = os.environ["ARMA_CONFIG"]
 KEYS = "/arma3/keys"
-ACTIVEMODPACK = os.environ["ALKI_MODPACKNAME"]
+ACTIVEMODPACK = os.environ["ALKI_MODPACKNAME"].lower()
 
 os.makedirs("root/Steam/steamapps", exist_ok=True)
 os.makedirs("/arma3", exist_ok=True)
 os.system("rm -R /arma3/mods/*/")
+for file in os.listdir("/arma3/mods/"):
+    os.rename("/arma3/mods/" + file, "/arma3/mods/" + file.lower())
 if os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.html") and not os.path.isfile(f"/arma3/mods/{ACTIVEMODPACK}.txt") :
     modlistToSteam.main.convert(ACTIVEMODPACK)
     print("### converted modlist to steamcmd script ###")
@@ -73,11 +75,12 @@ def mods(d):
 
 launch = "{} -limitFPS={} -world={}".format(os.environ["ARMA_BINARY"], os.environ["ARMA_LIMITFPS"], os.environ["ARMA_WORLD"])
 
+modstoload = ""
 if os.path.exists("/arma3/mods"):
-    if os.environ["ARMA_DLC"] != "":
-        modstoload = mods("/arma3/mods")
-        modstoload += os.environ["ARMA_DLC"]+";\""
-    launch += " -mod={}".format(modstoload)
+    modstoload = mods("/arma3/mods")
+if os.environ["ARMA_DLC"] != "":
+    modstoload += os.environ["ARMA_DLC"]+";\""
+launch += f" -mod={modstoload}"
 
        
         
@@ -121,7 +124,7 @@ else:
 launch += " -port={} -name=\"{}\" -profiles=\"/arma3/configs/profiles\"".format(os.environ["PORT"], os.environ["ARMA_PROFILE"])
 
 if os.path.exists("servermods"):
-    launch += " -serverMod={}".format(modstoload)
+    launch += f" -serverMod={modstoload}"
 
 print("LAUNCHING ARMA SERVER WITH", launch, flush=True)
 os.system(launch)
